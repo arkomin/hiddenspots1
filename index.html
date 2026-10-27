@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hidden Hong Kong — Find the Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #FDF8F3;
+      --bg-warm: #F5EDE4;
+      --terracotta: #C4785A;
+      --terracotta-light: #D99B7E;
+      --terracotta-dark: #A85D42;
+      --gold: #D4A574;
+      --gold-light: #E8C9A0;
+      --sage: #8FA68E;
+      --sage-light: #B8C9B7;
+      --charcoal: #3D3D3D;
+      --charcoal-light: #5A5A5A;
+      --text-body: #4A4440;
+      --white: #FFFFFF;
+      --shadow: rgba(61, 45, 35, 0.08);
+      --shadow-lg: rgba(61, 45, 35, 0.12);
+      --success: #7A9E7E;
+      --danger: #C46B5E;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-cream);
+      color: var(--text-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== LANDING ===== */
+    .landing {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; text-align: center; padding: 2rem;
+      background: linear-gradient(160deg, var(--bg-cream) 0%, var(--bg-warm) 100%);
+      position: relative;
+    }
+    .landing::before {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-light) 0%, transparent 70%);
+      opacity: 0.5; pointer-events: none;
+    }
+    .landing::after {
+      content: ''; position: absolute; bottom: -60px; left: -60px;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: radial-gradient(circle, var(--terracotta-light) 0%, transparent 70%);
+      opacity: 0.25; pointer-events: none;
+    }
+    .landing-content { position: relative; z-index: 1; max-width: 640px; }
+    .landing h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      color: var(--charcoal);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .landing h1 span { color: var(--terracotta); }
+    .landing p.subtitle {
+      font-size: 1.15rem; font-weight: 300; color: var(--charcoal-light);
+      margin-bottom: 2.5rem; line-height: 1.6;
+    }
+    .landing .rules {
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.5rem 2rem; margin-bottom: 2.5rem;
+      box-shadow: 0 8px 32px var(--shadow);
+      text-align: left; max-width: 480px; margin-left: auto; margin-right: auto;
+    }
+    .landing .rules h3 {
+      font-family: 'Playfair Display', serif; font-size: 1.1rem;
+      color: var(--terracotta-dark); margin-bottom: 0.75rem;
+    }
+    .landing .rules ul { list-style: none; }
+    .landing .rules li {
+      padding: 0.35rem 0; padding-left: 1.5rem; position: relative;
+      font-size: 0.95rem; color: var(--text-body);
+    }
+    .landing .rules li::before {
+      content: '•'; position: absolute; left: 0;
+      color: var(--gold); font-weight: 700;
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 0.5rem; padding: 0.9rem 2.4rem; border: none; border-radius: 50px;
+      font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.02em;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-dark) 100%);
+      color: var(--white); box-shadow: 0 6px 20px rgba(196, 120, 90, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(196, 120, 90, 0.45);
+    }
+    .btn-secondary {
+      background: var(--white); color: var(--terracotta-dark);
+      border: 2px solid var(--terracotta-light);
+    }
+    .btn-secondary:hover { background: var(--bg-warm); }
+
+    /* ===== GAME HEADER ===== */
+    .game-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(253, 248, 243, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .game-header .logo {
+      font-family: 'Playfair Display', serif; font-size: 1.25rem;
+      color: var(--charcoal); font-weight: 700;
+    }
+    .game-header .logo span { color: var(--terracotta); }
+    .header-stats { display: flex; gap: 1.5rem; align-items: center; }
+    .stat-pill {
+      background: var(--white); border-radius: 50px;
+      padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 500;
+      box-shadow: 0 2px 8px var(--shadow); color: var(--charcoal-light);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .stat-pill strong { color: var(--terracotta-dark); }
+    .progress-dots { display: flex; gap: 0.4rem; }
+    .progress-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--bg-warm); border: 2px solid var(--gold-light);
+      transition: all 0.4s ease;
+    }
+    .progress-dot.active { background: var(--gold); border-color: var(--gold); }
+    .progress-dot.done { background: var(--success); border-color: var(--success); }
+
+    /* ===== SCREENS ===== */
+    .screen { display: none; padding: 1.5rem 2rem 3rem; max-width: 1200px; margin: 0 auto; }
+    .screen.active { display: block; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .round-title {
+      font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: var(--charcoal); text-align: center; margin-bottom: 0.25rem;
+    }
+    .round-subtitle {
+      text-align: center; color: var(--charcoal-light); font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ===== IMAGES AREA ===== */
+    .images-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 900px) {
+      .images-row { grid-template-columns: 1fr; }
+    }
+    .img-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: 0 8px 32px var(--shadow);
+      overflow: hidden; position: relative;
+    }
+    .img-card .label {
+      position: absolute; top: 12px; left: 12px; z-index: 10;
+      background: rgba(61, 61, 61, 0.75); color: var(--white);
+      padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.75rem;
+      font-weight: 600; letter-spacing: 0.05em; backdrop-filter: blur(4px);
+    }
+    .img-wrap {
+      position: relative; width: 100%; padding-top: 66.67%;
+      background: var(--bg-warm); cursor: crosshair;
+    }
+    .img-wrap img {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; display: block; user-select: none; pointer-events: none;
+    }
+    .hotspot {
+      position: absolute; border-radius: 50%;
+      border: none;
+      background: transparent;
+      cursor: crosshair; transform: translate(-50%, -50%);
+      transition: all 0.25s ease; z-index: 5;
+    }
+    .hotspot.found {
+      border: 3px solid var(--success);
+      background: rgba(122, 158, 126, 0.25);
+      box-shadow: 0 0 0 6px rgba(122, 158, 126, 0.25);
+      pointer-events: none;
+      animation: popFound 0.4s ease;
+    }
+    @keyframes popFound {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.4); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+    .hotspot.missed-reveal {
+      border: 3px solid var(--danger);
+      background: rgba(196, 107, 94, 0.2);
+      pointer-events: none;
+    }
+
+    /* Wrong-click ripple */
+    .wrong-ripple {
+      position: absolute; border-radius: 50%;
+      border: 2px solid var(--danger);
+      background: rgba(196, 107, 94, 0.15);
+      transform: translate(-50%, -50%) scale(0);
+      animation: rippleOut 0.6s ease forwards;
+      pointer-events: none; z-index: 4;
+    }
+    @keyframes rippleOut {
+      to { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+    }
+
+    /* ===== CONTROLS ===== */
+    .controls-bar {
+      display: flex; justify-content: center; align-items: center;
+      gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    .tries-box {
+      display: flex; gap: 0.35rem; align-items: center;
+    }
+    .heart {
+      width: 22px; height: 22px; transition: all 0.3s ease;
+    }
+    .heart.lost { opacity: 0.25; transform: scale(0.8); }
+    .diff-counter {
+      font-size: 0.9rem; font-weight: 500; color: var(--charcoal-light);
+      background: var(--white); padding: 0.5rem 1rem; border-radius: 50px;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .diff-counter strong { color: var(--terracotta-dark); }
+
+    /* ===== ROUND COMPLETE / INTRO ===== */
+    .overlay-panel {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: 0 12px 48px var(--shadow-lg);
+      max-width: 720px; margin: 0 auto; padding: 2.5rem;
+      text-align: center; animation: fadeIn 0.5s ease;
+    }
+    .overlay-panel h2 {
+      font-family: 'Playfair Display', serif; font-size: 1.8rem;
+      color: var(--charcoal); margin-bottom: 0.5rem;
+    }
+    .overlay-panel .score-text {
+      font-size: 1rem; color: var(--charcoal-light); margin-bottom: 1.5rem;
+    }
+    .found-list {
+      text-align: left; background: var(--bg-cream); border-radius: var(--radius-sm);
+      padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+    }
+    .found-list h4 {
+      font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--terracotta-dark); margin-bottom: 0.75rem;
+    }
+    .found-list ul { list-style: none; }
+    .found-list li {
+      padding: 0.45rem 0; padding-left: 1.6rem; position: relative;
+      font-size: 0.92rem; color: var(--text-body); line-height: 1.5;
+    }
+    .found-list li.found-item::before {
+      content: '✓'; position: absolute; left: 0; color: var(--success);
+      font-weight: 700;
+    }
+    .found-list li.missed-item::before {
+      content: '✗'; position: absolute; left: 0; color: var(--danger);
+      font-weight: 700;
+    }
+    .intro-box {
+      background: linear-gradient(135deg, var(--bg-warm) 0%, var(--bg-cream) 100%);
+      border-left: 4px solid var(--gold); border-radius: var(--radius-sm);
+      padding: 1.25rem 1.5rem; text-align: left; margin-bottom: 1.5rem;
+    }
+    .intro-box h4 {
+      font-family: 'Playfair Display', serif; font-size: 1.05rem;
+      color: var(--terracotta-dark); margin-bottom: 0.5rem;
+    }
+    .intro-box p {
+      font-size: 0.95rem; line-height: 1.7; color: var(--text-body);
+    }
+
+    /* ===== FINAL SCREEN ===== */
+    .final-screen { text-align: center; padding-top: 3rem; }
+    .final-screen h1 {
+      font-family: 'Playfair Display', serif; font-size: 2.5rem;
+      color: var(--charcoal); margin-bottom: 0.5rem;
+    }
+    .final-score-circle {
+      width: 140px; height: 140px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      margin: 1.5rem auto; box-shadow: 0 8px 24px rgba(212, 165, 116, 0.3);
+    }
+    .final-score-circle .num {
+      font-family: 'Playfair Display', serif; font-size: 2.5rem;
+      color: var(--charcoal); line-height: 1;
+    }
+    .final-score-circle .label {
+      font-size: 0.8rem; color: var(--charcoal-light); font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .final-rank {
+      font-size: 1.2rem; color: var(--terracotta); font-weight: 600;
+      margin-bottom: 2rem;
+    }
+    .summary-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem; max-width: 800px; margin: 0 auto 2rem;
+    }
+    .summary-card {
+      background: var(--white); border-radius: var(--radius-sm);
+      padding: 1.25rem; box-shadow: 0 4px 16px var(--shadow);
+      text-align: left;
+    }
+    .summary-card h4 {
+      font-family: 'Playfair Display', serif; font-size: 1rem;
+      color: var(--terracotta-dark); margin-bottom: 0.4rem;
+    }
+    .summary-card .mini-score {
+      font-size: 0.85rem; color: var(--charcoal-light);
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--charcoal); color: var(--white); padding: 0.75rem 1.5rem;
+      border-radius: 50px; font-size: 0.9rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2); opacity: 0; pointer-events: none;
+      transition: all 0.35s ease; z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--danger); }
+
+    /* ===== HINT BUTTON ===== */
+    .hint-btn {
+      background: var(--white); border: 2px solid var(--gold-light);
+      color: var(--charcoal-light); border-radius: 50px;
+      padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 500;
+      cursor: pointer; transition: all 0.25s ease; font-family: 'Inter', sans-serif;
+      display: inline-flex; align-items: center; gap: 0.35rem;
+    }
+    .hint-btn:hover { border-color: var(--gold); background: var(--bg-warm); }
+    .hint-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <!-- ========== LANDING ========== -->
+  <section id="landing" class="landing">
+    <div class="landing-content">
+      <h1>Hidden <span>Hong Kong</span></h1>
+      <p class="subtitle">
+        Four iconic locations. Two photos each.<br>
+        Can you spot what changed?
+      </p>
+      <div class="rules">
+        <h3>How to Play</h3>
+        <ul>
+          <li>Compare the <strong>Original</strong> and <strong>Edited</strong> photos side by side.</li>
+          <li>Click on the <strong>Edited</strong> image where you think a detail was changed.</li>
+          <li>You have <strong>5 lives</strong> per round — wrong clicks cost a life!</li>
+          <li>Find all differences to unlock the story behind each location.</li>
+        </ul>
+      </div>
+      <button class="btn btn-primary" onclick="startGame()">Start Exploring</button>
+    </div>
+  </section>
+
+  <!-- ========== GAME HEADER ========== -->
+  <header id="gameHeader" class="game-header" style="display:none;">
+    <div class="logo">Hidden <span>Hong Kong</span></div>
+    <div class="header-stats">
+      <div class="stat-pill">Round <strong id="headerRound">1</strong> / 4</div>
+      <div class="progress-dots" id="headerDots"></div>
+      <div class="stat-pill">Score <strong id="headerScore">0</strong></div>
+    </div>
+  </header>
+
+  <!-- ========== GAME SCREEN ========== -->
+  <section id="gameScreen" class="screen">
+    <h2 class="round-title" id="roundTitle">Blue House</h2>
+    <p class="round-subtitle" id="roundSubtitle">Wan Chai, Hong Kong Island</p>
+
+    <div class="controls-bar">
+      <div class="diff-counter">
+        Found <strong id="foundCount">0</strong> / <strong id="totalDiffs">4</strong> details
+      </div>
+      <div class="tries-box" id="triesBox" title="Lives remaining"></div>
+      <button class="hint-btn" id="hintBtn" onclick="useHint()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Hint
+      </button>
+    </div>
+
+    <div class="images-row">
+      <div class="img-card">
+        <span class="label">ORIGINAL</span>
+        <div class="img-wrap" id="originalWrap">
+          <img id="originalImg" src="" alt="Original" />
+        </div>
+      </div>
+      <div class="img-card">
+        <span class="label">EDITED</span>
+        <div class="img-wrap" id="editedWrap">
+          <img id="editedImg" src="" alt="Edited" />
+          <!-- hotspots injected here -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ROUND COMPLETE / INTRO ========== -->
+  <section id="introScreen" class="screen">
+    <div class="overlay-panel">
+      <h2 id="introTitle">Round Complete!</h2>
+      <p class="score-text" id="introScoreText">You found 3 out of 4 details.</p>
+
+      <div class="found-list" id="foundListBox">
+        <h4>Details in this round</h4>
+        <ul id="foundList"></ul>
+      </div>
+
+      <div class="intro-box">
+        <h4 id="introLocName">About this Location</h4>
+        <p id="introText"></p>
+      </div>
+
+      <button class="btn btn-primary" id="nextRoundBtn" onclick="nextRound()">
+        <span id="nextBtnText">Next Location</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========== FINAL SCREEN ========== -->
+  <section id="finalScreen" class="screen final-screen">
+    <div class="overlay-panel" style="max-width: 640px;">
+      <h1>Journey Complete!</h1>
+      <p style="color: var(--charcoal-light); margin-bottom: 1rem;">You explored 4 iconic spots across Hong Kong.</p>
+
+      <div class="final-score-circle">
+        <span class="num" id="finalScoreNum">0</span>
+        <span class="label">Total Score</span>
+      </div>
+      <div class="final-rank" id="finalRank"></div>
+
+      <div class="summary-cards" id="summaryCards"></div>
+
+      <button class="btn btn-secondary" onclick="restartGame()">Play Again</button>
+    </div>
+  </section>
+
+  <!-- ========== TOAST ========== -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // ===================== DATA =====================
+    const ROUNDS = [
+      {
+        id: 'blue-house',
+        title: 'Blue House',
+        subtitle: 'Wan Chai, Hong Kong Island',
+        original: 'images/blue-house-original.jpg',
+        edited: 'images/blue-house-edited.jpg',
+        intro: `The Blue House is a cluster of historic tenement buildings located in Wan Chai. Built in the 1920s, it is famous for its vibrant bright blue façade; reportedly painted because the waterworks department only had blue paint left at the time. Today, it stands as a rare Grade I historic building and a successful example of community-led heritage conservation in Hong Kong, blending traditional architectural features with early 20th-century urban housing.`,
+        differences: [
+          { label: 'Red Lantern Added', desc: 'A traditional Chinese red lantern was added hanging from the blue metal railing on the upper-right balcony.', x: 0.80, y: 0.14, r: 0.08 },
+          { label: 'Plants Added', desc: 'Patches of green plants and vines were added growing out of the cracks in the white exterior wall just below the balcony on the right.', x: 0.76, y: 0.48, r: 0.08 },
+          { label: 'Golden Bat Emblem', desc: 'A golden bat emblem has been added to the top face of the corbel, where the original simply shows a plain, dark square panel.', x: 0.36, y: 0.78, r: 0.07 },
+          { label: 'Stained Glass Altered', desc: 'The colourful stained glass window panels on the upper-left floor were modified to feature more detailed pictorial patterns.', x: 0.22, y: 0.16, r: 0.12 }
+        ]
+      },
+      {
+        id: 'hku',
+        title: 'The Main Building, HKU',
+        subtitle: 'Pok Fu Lam, Hong Kong Island',
+        original: 'images/hku-original.jpg',
+        edited: 'images/hku-edited.jpg',
+        intro: `The Main Building of the University of Hong Kong is the university's oldest and most iconic structure, completed in 1912. Designed in the magnificent Edwardian Baroque architectural style, it features striking red brickwork, imposing granite colonnades, and symmetrical corner towers capped with a prominent central clock tower. As a declared monument in Hong Kong, it has served as the historic academic heart of the institution for over a century, welcoming generations of scholars and leaders.`,
+        differences: [
+          { label: 'Red Telephone Booth', desc: 'A classic British-style red telephone booth has been added to the lower-right section of the brick plaza pavement.', x: 0.93, y: 0.82, r: 0.05 },
+          { label: 'Window Altered', desc: 'One of the upper-floor windows on the left wing has been changed to feature a decorative white latticework pattern instead of standard glass panes.', x: 0.34, y: 0.64, r: 0.05 },
+          { label: 'Roof Equipment Removed', desc: 'Several dark mechanical / ventilation units positioned along the flat roof areas towards the upper-left wing have been removed.', x: 0.20, y: 0.50, r: 0.08 },
+          { label: 'Center Roof Equipment', desc: 'Mechanical equipment on the center section of the flat roof has been altered.', x: 0.60, y: 0.51, r: 0.05 }
+        ]
+      },
+      {
+        id: 'gage',
+        title: 'Gage Street — Lan Fong Yuen',
+        subtitle: 'Central, Hong Kong Island',
+        original: 'images/gage-original.jpg',
+        edited: 'images/gage-edited.jpg',
+        intro: `Located on Gage Street in Central, Hong Kong, Lan Fong Yuen is one of the city's most legendary and oldest dai pai dong (open-air food stalls). Established in 1952, it is universally credited as the birthplace of Hong Kong-style "silk stocking" milk tea and crispy buns with condensed milk and butter. Tucked amid the bustling sloping streets and vibrant market atmosphere of Central, it remains a beloved culinary landmark representing traditional local cha chaan teng culture.`,
+        differences: [
+          { label: 'Plastic Crates Changed', desc: 'The top storage crates stacked on the left side of the street have been changed from red to bright yellow.', x: 0.16, y: 0.73, r: 0.07 },
+          { label: "Woman's Bag Altered", desc: "The patterned tote bag carried by the woman standing in the centre has been replaced with a solid brown leather handbag.", x: 0.43, y: 0.74, r: 0.06 },
+          { label: 'Additional Umbrella', desc: 'A second, larger umbrella featuring red, white, and blue panels has been added right next to the existing blue umbrella hanging over the street market stalls on the right.', x: 0.85, y: 0.40, r: 0.08 },
+          { label: "Man's T-Shirt Changed", desc: "The graphic design / logo on the back of the white t-shirt worn by the man walking away on the right side of the street has been altered.", x: 0.91, y: 0.62, r: 0.05 }
+        ]
+      },
+      {
+        id: 'taikwun',
+        title: 'Tai Kwun',
+        subtitle: 'Central, Hong Kong Island',
+        original: 'images/taikwun-original.jpg',
+        edited: 'images/taikwun-edited.jpg',
+        intro: `Tai Kwun is a historic compound of former colonial buildings comprising the Central Police Station, Central Magistracy, and Victoria Prison, located in the heart of Central, Hong Kong. Built starting in the mid-19th century, this sprawling site is one of the city's most significant architectural and historical landmarks. Following a massive heritage conservation and revitalization project, it reopened as a vibrant centre for contemporary art, heritage exhibitions, and cultural performances, seamlessly contrasting its Victorian-era brick architecture with ultra-modern skyscrapers towering in the background.`,
+        differences: [
+          { label: 'Stained Glass Window', desc: 'The large central rectangular window on the upper floor of the front facade has been replaced with colourful stained glass featuring a floral pattern.', x: 0.50, y: 0.65, r: 0.06 },
+          { label: 'Solar Panels Added', desc: 'A row of dark solar panels has been installed on the tiled roof section on the right side of the building.', x: 0.82, y: 0.52, r: 0.08 },
+          { label: 'Left Ring Filled In', desc: 'The decorative white circular ring / sculpture mounted on the left pillar of the main entrance has been filled in to look like a solid white disc.', x: 0.39, y: 0.80, r: 0.05 },
+          { label: 'Right Wall Light Removed', desc: 'The glowing globe light fixture on the right-hand pillar of the central entrance structure has been removed.', x: 0.62, y: 0.80, r: 0.04 }
+        ]
+      }
+    ];
+
+    const MAX_TRIES = 5;
+
+    // ===================== STATE =====================
+    let currentRound = 0;
+    let score = 0;
+    let foundInRound = new Set();
+    let triesLeft = MAX_TRIES;
+    let hintUsed = false;
+    let roundScores = []; // { found, total, triesUsed }
+
+    // ===================== DOM REFS =====================
+    const $ = id => document.getElementById(id);
+    const landing = $('landing');
+    const gameHeader = $('gameHeader');
+    const gameScreen = $('gameScreen');
+    const introScreen = $('introScreen');
+    const finalScreen = $('finalScreen');
+
+    // ===================== UTILS =====================
+    function showToast(msg, type = '') {
+      const t = $('toast');
+      t.textContent = msg;
+      t.className = 'toast ' + type;
+      requestAnimationFrame(() => t.classList.add('show'));
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    function setScreen(name) {
+      [gameScreen, introScreen, finalScreen].forEach(s => s.classList.remove('active'));
+      if (name === 'game') gameScreen.classList.add('active');
+      if (name === 'intro') introScreen.classList.add('active');
+      if (name === 'final') finalScreen.classList.add('active');
+    }
+
+    // ===================== INIT =====================
+    function buildHeaderDots() {
+      const box = $('headerDots');
+      box.innerHTML = '';
+      for (let i = 0; i < ROUNDS.length; i++) {
+        const d = document.createElement('div');
+        d.className = 'progress-dot' + (i === 0 ? ' active' : '');
+        box.appendChild(d);
+      }
+    }
+
+    function startGame() {
+      currentRound = 0; score = 0; roundScores = [];
+      landing.style.display = 'none';
+      gameHeader.style.display = 'flex';
+      buildHeaderDots();
+      loadRound(0);
+    }
+
+    function restartGame() {
+      finalScreen.classList.remove('active');
+      landing.style.display = 'flex';
+      gameHeader.style.display = 'none';
+    }
+
+    // ===================== ROUND LOGIC =====================
+    function loadRound(idx) {
+      currentRound = idx;
+      const r = ROUNDS[idx];
+      foundInRound = new Set();
+      triesLeft = MAX_TRIES;
+      hintUsed = false;
+
+      $('headerRound').textContent = idx + 1;
+      $('headerScore').textContent = score;
+      $('roundTitle').textContent = r.title;
+      $('roundSubtitle').textContent = r.subtitle;
+      $('foundCount').textContent = '0';
+      $('totalDiffs').textContent = r.differences.length;
+      $('originalImg').src = r.original;
+      $('editedImg').src = r.edited;
+      $('hintBtn').disabled = false;
+
+      // Update dots
+      const dots = document.querySelectorAll('.progress-dot');
+      dots.forEach((d, i) => {
+        d.className = 'progress-dot' +
+          (i < idx ? ' done' : i === idx ? ' active' : '');
+      });
+
+      renderTries();
+      renderHotspots();
+      setScreen('game');
+    }
+
+    function renderTries() {
+      const box = $('triesBox');
+      box.innerHTML = '';
+      for (let i = 0; i < MAX_TRIES; i++) {
+        const heart = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        heart.setAttribute('viewBox', '0 0 24 24');
+        heart.setAttribute('class', 'heart' + (i >= triesLeft ? ' lost' : ''));
+        heart.innerHTML = '<path fill="' + (i < triesLeft ? '#C4785A' : '#ddd') + '" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
+        box.appendChild(heart);
+      }
+    }
+
+    function renderHotspots() {
+      const wrap = $('editedWrap');
+      // remove old hotspots
+      wrap.querySelectorAll('.hotspot, .wrong-ripple').forEach(el => el.remove());
+
+      const r = ROUNDS[currentRound];
+      r.differences.forEach((diff, i) => {
+        const el = document.createElement('div');
+        el.className = 'hotspot';
+        el.style.left = (diff.x * 100) + '%';
+        el.style.top = (diff.y * 100) + '%';
+        el.style.width = (diff.r * 200) + '%';
+        el.style.height = (diff.r * 200 * (wrap.offsetWidth / wrap.offsetHeight || 1.5)) + '%';
+        // keep circular by using min dimension via aspect ratio adjustment in JS below
+        el.dataset.index = i;
+        el.addEventListener('click', e => onHotspotClick(e, i));
+        wrap.appendChild(el);
+      });
+
+      // Resize observer to keep hotspots circular & correctly sized
+      adjustHotspotSizes();
+    }
+
+    function adjustHotspotSizes() {
+      const wrap = $('editedWrap');
+      const w = wrap.offsetWidth;
+      const h = wrap.offsetHeight;
+      if (!w || !h) return;
+      const minDim = Math.min(w, h);
+      wrap.querySelectorAll('.hotspot').forEach(el => {
+        const diff = ROUNDS[currentRound].differences[el.dataset.index];
+        const size = Math.round(diff.r * 2 * minDim);
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+      });
+    }
+    window.addEventListener('resize', () => {
+      if (gameScreen.classList.contains('active')) adjustHotspotSizes();
+    });
+
+    function onHotspotClick(e, idx) {
+      e.stopPropagation();
+      if (foundInRound.has(idx)) return;
+
+      foundInRound.add(idx);
+      score += 10;
+      $('headerScore').textContent = score;
+      $('foundCount').textContent = foundInRound.size;
+
+      // Mark visual
+      const wrap = $('editedWrap');
+      const hotspots = wrap.querySelectorAll('.hotspot');
+      hotspots[idx].classList.add('found');
+
+      showToast('Detail found! +' + (hintUsed ? 5 : 10) + ' pts', 'success');
+
+      if (foundInRound.size === ROUNDS[currentRound].differences.length) {
+        setTimeout(finishRound, 900);
+      }
+    }
+
+    // Wrong clicks on edited image background
+    $('editedWrap').addEventListener('click', e => {
+      if (e.target.classList.contains('hotspot') || e.target.classList.contains('wrong-ripple')) return;
+      if (foundInRound.size === ROUNDS[currentRound].differences.length) return;
+
+      triesLeft--;
+      renderTries();
+
+      // Ripple effect
+      const wrap = $('editedWrap');
+      const rect = wrap.getBoundingClientRect();
+      const ripple = document.createElement('div');
+      ripple.className = 'wrong-ripple';
+      ripple.style.left = (e.clientX - rect.left) + 'px';
+      ripple.style.top = (e.clientY - rect.top) + 'px';
+      ripple.style.width = '40px'; ripple.style.height = '40px';
+      wrap.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 650);
+
+      if (triesLeft <= 0) {
+        showToast('No lives left!', 'error');
+        setTimeout(finishRound, 800);
+      } else {
+        showToast('Not quite — keep looking!', 'error');
+      }
+    });
+
+    function useHint() {
+      if (hintUsed) return;
+      const r = ROUNDS[currentRound];
+      let unfound = -1;
+      for (let i = 0; i < r.differences.length; i++) {
+        if (!foundInRound.has(i)) { unfound = i; break; }
+      }
+      if (unfound === -1) return;
+
+      hintUsed = true;
+      $('hintBtn').disabled = true;
+      triesLeft = Math.max(0, triesLeft - 1);
+      renderTries();
+
+      const wrap = $('editedWrap');
+      const hotspots = wrap.querySelectorAll('.hotspot');
+      const target = hotspots[unfound];
+      target.style.borderColor = 'var(--gold)';
+      target.style.background = 'rgba(212,165,116,0.35)';
+      target.style.boxShadow = '0 0 0 8px rgba(212,165,116,0.3)';
+      setTimeout(() => {
+        target.style.borderColor = '';
+        target.style.background = '';
+        target.style.boxShadow = '';
+      }, 2500);
+
+      showToast('Hint revealed — look for the glow!', 'success');
+    }
+
+    // ===================== ROUND FINISH =====================
+    function finishRound() {
+      const r = ROUNDS[currentRound];
+      const total = r.differences.length;
+      const found = foundInRound.size;
+      const triesUsed = MAX_TRIES - triesLeft;
+      roundScores.push({ title: r.title, found, total, triesUsed });
+
+      $('introTitle').textContent = found === total ? 'Round Complete!' : 'Round Over';
+      $('introScoreText').textContent =
+        `You found ${found} out of ${total} detail${total !== 1 ? 's' : ''}` +
+        (triesUsed > 0 ? ` and used ${triesUsed} life${triesUsed !== 1 ? 's' : ''}.` : '.');
+
+      $('introLocName').textContent = 'About ' + r.title;
+      $('introText').textContent = r.intro;
+
+      // Build found list
+      const list = $('foundList');
+      list.innerHTML = '';
+      r.differences.forEach((diff, i) => {
+        const li = document.createElement('li');
+        li.className = foundInRound.has(i) ? 'found-item' : 'missed-item';
+        li.innerHTML = `<strong>${diff.label}</strong> — ${diff.desc}`;
+        list.appendChild(li);
+      });
+
+      // Reveal missed hotspots
+      const wrap = $('editedWrap');
+      const hotspots = wrap.querySelectorAll('.hotspot');
+      r.differences.forEach((_, i) => {
+        if (!foundInRound.has(i)) hotspots[i].classList.add('missed-reveal');
+      });
+
+      if (currentRound === ROUNDS.length - 1) {
+        $('nextBtnText').textContent = 'See Final Score';
+        $('nextRoundBtn').onclick = showFinal;
+      } else {
+        $('nextBtnText').textContent = 'Next Location';
+        $('nextRoundBtn').onclick = nextRound;
+      }
+
+      setScreen('intro');
+    }
+
+    function nextRound() {
+      loadRound(currentRound + 1);
+    }
+
+    // ===================== FINAL =====================
+    function showFinal() {
+      const totalFound = roundScores.reduce((s, r) => s + r.found, 0);
+      const totalDiffs = ROUNDS.reduce((s, r) => s + r.differences.length, 0);
+
+      $('finalScoreNum').textContent = score;
+
+      let rank = '';
+      const pct = totalFound / totalDiffs;
+      if (pct === 1) rank = '🏆 Hawk-Eye Explorer — Perfect Score!';
+      else if (pct >= 0.8) rank = '⭐ Sharp Observer — Excellent!';
+      else if (pct >= 0.6) rank = '🔍 Keen Detective — Well Done!';
+      else if (pct >= 0.4) rank = '📸 Curious Wanderer — Keep Exploring!';
+      else rank = '🗺️ Brave Adventurer — Try Again!';
+      $('finalRank').textContent = rank;
+
+      const cards = $('summaryCards');
+      cards.innerHTML = '';
+      roundScores.forEach((rs, i) => {
+        const card = document.createElement('div');
+        card.className = 'summary-card';
+        card.innerHTML = `
+          <h4>${rs.title}</h4>
+          <div class="mini-score">Found ${rs.found}/${rs.total} details · ${rs.triesUsed} life${rs.triesUsed!==1?'s':''} used</div>
+        `;
+        cards.appendChild(card);
+      });
+
+      setScreen('final');
+    }
+  </script>
+</body>
+</html>
